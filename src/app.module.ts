@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { configValidationSchema } from './config.schema';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const isProduction = configService.get('STAGE') === 'prod';
-        return {
+        const config: any = {
           ssl: isProduction,
           extra: {
             ssl: isProduction ? { rejectUnauthorized: false } : null,
@@ -31,9 +32,11 @@ import { configValidationSchema } from './config.schema';
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
         };
+        return config;
       },
     }),
     AuthModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

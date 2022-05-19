@@ -5,8 +5,11 @@ import { AppModule } from './app.module';
 import { TransformInterceptor } from './transform.interceptor';
 import { Logger } from '@nestjs/common';
 async function bootstrap() {
+  const port = process.env.PORT;
+  const prefix = process.env.PREFIX;
   const logger = new Logger();
   const app = await NestFactory.create(AppModule, { cors: true });
+  app.setGlobalPrefix(prefix);
   app.useGlobalPipes(new ValidationPipe());
 
   app.useGlobalInterceptors(new TransformInterceptor());
@@ -18,7 +21,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  const port = process.env.PORT;
+
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);
 }

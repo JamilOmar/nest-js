@@ -1,0 +1,32 @@
+version: "3"
+volumes: 
+  postgres_data:
+      driver: local
+services: 
+  task-management-api: 
+    build: 
+      context: .
+    container_name: task-management-api
+    environment: 
+      PORT: 8080
+      DB_HOST: task-management-db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: task-management
+      STAGE: dev
+      JWT_SECRET: B[T@_6_-M2ux\^u),<7D9hsu99x.2-}bX_2bUXgnW?#5YT*cn$d{HjvBW^#Jfs]j
+    ports: 
+      - "8080:8080"
+    tty: true
+    depends_on:
+      - task-management-db
+  task-management-db:
+    image: postgres:10.1
+    container_name: task-management-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: task-management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
